@@ -25,4 +25,4 @@ then
 	echo "FILE WAS TRANSFERED SUCCESSFULLY"
 else
 	echo "FILE TRANSFER FAILED"
-fi
+	fi

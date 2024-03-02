@@ -1,2 +1,0 @@
-by patrick
-0X1A-application_server

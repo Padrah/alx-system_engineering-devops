@@ -1,46 +1,48 @@
 #!/usr/bin/python3
-"""
-Script to query a list of all hot posts on a given Reddit subreddit.
-"""
+""" Recurse it! """
+from requests import get
 
-import requests
+REDDIT = "https://www.reddit.com/"
+HEADERS = {'user-agent': 'my-app/0.0.1'}
 
 
-def recurse(subreddit, hot_list=[], after="", count=0):
-    # Construct the URL for the subreddit's hot posts in JSON format
-    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
+def recurse(subreddit, hot_list=[], after=""):
+    """
+    Returns a list containing the titles of all hot articles for a given
+    subreddit. If no results are found for the given subreddit, the function
+    should return None.
+    """
+    if after is None:
+        return hot_list
 
-    # Define headers for the HTTP request, including User-Agent
-    headers = {
-        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
-    }
+    url = REDDIT + "r/{}/hot/.json".format(subreddit)
 
-    # Define parameters for the request, including pagination and limit
     params = {
-        "after": after,
-        "count": count,
-        "limit": 100
+        'limit': 100,
+        'after': after
     }
 
-    # Send a GET request to the subreddit's hot posts page
-    response = requests.get(url, headers=headers, params=params,
-                            allow_redirects=False)
+    r = get(url, headers=HEADERS, params=params, allow_redirects=False)
 
-    # Check if the response status code indicates a not-found error (404)
-    if response.status_code == 404:
+    if r.status_code != 200:
         return None
-    # Parse the JSON response and extract relevant data
-    results = response.json().get("data")
-    after = results.get("after")
-    count += results.get("dist")
 
-    # Append post titles to the hot_list
-    for c in results.get("children"):
-        hot_list.append(c.get("data").get("title"))
+    try:
+        js = r.json()
 
-    # If there are more posts to retrieve, recursively call the function
-    if after is not None:
-        return recurse(subreddit, hot_list, after, count)
+    except ValueError:
+        return None
 
-    # Return the final list of hot post titles
-    return hot_list
+    try:
+
+        data = js.get("data")
+        after = data.get("after")
+        children = data.get("children")
+        for child in children:
+            post = child.get("data")
+            hot_list.append(post.get("title"))
+
+    except Exception:
+        return None
+
+    return recurse(subreddit, hot_list, after)

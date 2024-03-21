@@ -2,7 +2,7 @@
 # Usage: ./1-world_wide_web <domain> <subdomain>
 #
 
-main_information () {
+domain_information () {
 	#perform Dns lookup
         line=$(dig "$2"."$1" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
 	#extract relevant information and print it

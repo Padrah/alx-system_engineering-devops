@@ -5,7 +5,7 @@
 main_information () {
 	#perform Dns lookup
         line=$(dig "$2"."$1" | grep -A1 'ANSWER SECTION:' | tr '\t' '\n' | tail -2 | tr '\n' ' ')
-        echo "$subdomain $line" | awk '{printf "The subdomain %s is a %s record and points to %s\n", $1, $2, $3}'
+        echo "$subdomain $line" | awk '{printf "The subdomain %s is a %s record and points to %s\n", $1, $2, $3, $4}'
 }
 
 #check the numbers of arguments passed
@@ -14,9 +14,9 @@ then
   #if there is only one argument
   #call the domain information
   domain_information "$1" "www"
-  domain_information "$1" "lb-01"
-  domain_information "$1" "web-01"
-  domain_information "$1" "web-02"
+  domain_information "$2" "lb-01"
+  domain_information "$3" "web-01"
+  domain_information "$4" "web-02"
 elif [ "$#" == 2 ]
 then
   #if there are two arguments call the domain information

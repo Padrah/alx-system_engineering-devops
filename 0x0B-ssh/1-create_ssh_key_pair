@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 #creates an RSA keypair of the ssh in the sandbox
 
-ssh-keygen -t rsa -b 4096 -P betty -f ~/.ssh/school
+ssh-keygen -b 4096 -N betty -f school
 
